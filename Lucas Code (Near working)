@@ -1,0 +1,174 @@
+from hub import light_matrix
+from hub import port
+import motor
+import runloop
+import color_sensor
+import time
+import color
+
+
+# --- SETTINGS ---
+WHITE_LIGHT_THRESHOLD = 95# increase to 85+ if gray still triggers
+
+# --- SENSOR LOGIC ---
+
+def get_color():
+    detected_color = color_sensor.color(port.D)
+    reflected_light = color_sensor.reflection(port.D)
+
+    print("Color:", detected_color, "Light:", reflected_light)
+    return detected_color
+
+def is_true_white():
+    detected_color = color_sensor.color(port.D)
+    reflected_light = color_sensor.reflection(port.D)
+
+    print("Color:", detected_color, "Light:", reflected_light)
+
+    return detected_color == color.WHITE and reflected_light >= WHITE_LIGHT_THRESHOLD
+
+def is_red():
+    detected_color = color_sensor.color(port.D)
+    reflected_light = color_sensor.reflection(port.D)
+
+    print("Color:", detected_color, "Light:", reflected_light)
+
+    return detected_color == color.RED
+
+def is_NOT_White():
+    detected_color = color_sensor.color(port.D)
+    reflected_light = color_sensor.reflection(port.D)
+
+    print("Color:", detected_color, "Light:", reflected_light)
+
+    return detected_color != color.WHITE and reflected_light <= WHITE_LIGHT_THRESHOLD
+
+
+# --- MAIN PROGRAM ---
+async def main():
+    await light_matrix.write("Hi!")
+
+    # --- MOVEMENT FUNCTIONS ---
+    async def forward_fast(angle):
+        motor.run_for_degrees(port.F, -angle, 360)
+        motor.run_for_degrees(port.E, angle, 360)
+
+    async def forward_slow(angle):
+        motor.run_for_degrees(port.F, -angle, 100)
+        motor.run_for_degrees(port.E, angle, 100)
+
+    async def back_fast(angle):
+        motor.run_for_degrees(port.F, angle, 360)
+        motor.run_for_degrees(port.E, -angle, 360)
+
+    async def back_slow(angle):
+        motor.run_for_degrees(port.F, angle, 100)
+        motor.run_for_degrees(port.E, -angle, 100)
+
+    async def turn_right(angle):
+        motor.run_for_degrees(port.E, -angle, 360)
+        motor.run_for_degrees(port.F, -angle, 360)
+
+    async def turn_left(angle):
+        motor.run_for_degrees(port.E, angle, 360)
+        motor.run_for_degrees(port.F, angle, 360)
+
+    async def left_arm(angle):
+        await motor.run_for_degrees(port.B, angle, 100)
+
+    async def right_arm(angle):
+        await motor.run_for_degrees(port.A, angle, 100)
+
+    # --- CONTROL LOOP ---
+    mainCONTROL = True
+    triggered = False
+    #Phase 50 is for testing, switch phase to 50
+    phase = 1
+    mode = 1
+
+    while mainCONTROL:
+        #white = is_true_white()
+        #red = is_red()
+        nonColor = is_NOT_White()
+        if mode == 1 and phase == 1:
+            await forward_fast(300)
+            time.sleep(1)
+
+        # PHASE 1: move until white, then raise left arm
+        if phase == 1:
+            await forward_fast(25)
+
+            mode = 2
+
+            if nonColor:
+                #await left_arm(50)
+                phase = 2
+
+        # PHASE 2
+        elif phase == 2:
+            #Left Arm Up
+            #await left_arm(50)
+            #time.sleep(0)
+
+            await turn_right(10)
+            time.sleep(1)
+
+            #Go Foward
+            await forward_fast(325)
+            time.sleep(1)
+
+            await turn_right(10)
+            time.sleep(1)
+
+            #Go Back ____line up
+            #await back_fast(130)
+           # time.sleep(1)
+
+            #Left Arm Down
+            await left_arm(-100)
+            time.sleep(1)
+
+            #Go Back ____pull sand
+            await back_fast(150)
+            time.sleep(1)
+
+            #Left Arm Up
+            await left_arm(50)
+            time.sleep(1)
+
+            #Turn Left
+            await turn_left(180)
+            time.sleep(1)
+
+            #Go Foward
+            await forward_fast(285)
+            time.sleep(1)
+
+            #Turn Right ___ towards ship
+            await turn_right(165)
+            time.sleep(1)
+
+            #Go Foward ____push ship
+            await forward_fast(580)
+            time.sleep(2)
+
+            phase = 3
+            
+
+        # PHASE 3
+        elif phase == 3:
+            await runloop.sleep_ms(100)
+            print("success")
+
+        # Phase 50 Test phase
+        elif phase == 50:
+            await forward_slow(25)
+
+        await runloop.sleep_ms(100)
+            
+
+
+
+
+# --- START PROGRAM ---
+runloop.run(main())
