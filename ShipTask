@@ -1,0 +1,96 @@
+from hub import light_matrix
+from hub import port
+import motor
+import runloop
+import time 
+
+
+#Start right arm at 200deg and left arm on floor
+async def main():
+    # write your code here
+    await light_matrix.write("Hi!")
+    async def forward_fast(angle):
+        motor.run_for_degrees(port.F, -angle, 360)
+        motor.run_for_degrees(port.E, angle, 360)
+    
+    async def forward_slow(angle):
+        motor.run_for_degrees(port.F, -angle, 100)
+        motor.run_for_degrees(port.E, angle, 100)
+    
+    async def back_fast(angle):
+        motor.run_for_degrees(port.F, angle, 360)
+        motor.run_for_degrees(port.E, -angle, 360)
+        
+    async def back_super_fast(angle):
+        motor.run_for_degrees(port.F, angle, 500)
+        motor.run_for_degrees(port.E, -angle, 500)
+
+    async def back_slow(angle):
+        motor.run_for_degrees(port.F, angle, 100)
+        motor.run_for_degrees(port.E, -angle, 100)
+    
+    async def turn_right(angle):
+        motor.run_for_degrees(port.E, -angle, 360)
+        motor.run_for_degrees(port.F, -angle, 360)
+
+    async def turn_left(angle):
+        motor.run_for_degrees(port.E, angle, 360)
+        motor.run_for_degrees(port.F, angle, 360)
+
+    async def left_arm(angle):
+        await motor.run_for_degrees(port.B, angle, 100)
+
+    async def right_arm(angle):
+        await motor.run_for_degrees(port.A, angle, 100)
+
+
+#Left Arm Up
+    await left_arm(50)
+    time.sleep(0)
+
+#Go Foward
+    await forward_fast(880)
+    time.sleep(2.5)
+
+#Go Back ____line up
+    await back_fast(130)
+    time.sleep(1)
+
+#Left Arm Down
+    await left_arm(-50)
+    time.sleep(1)
+
+#Go Back ____pull sand
+    await back_fast(100)
+    time.sleep(1)
+
+#Left Arm Up
+    await left_arm(50)
+    time.sleep(1)
+
+#Turn Left
+    await turn_left(180)    
+    time.sleep(1)
+
+#Go Foward
+    await forward_fast(285)
+    time.sleep(1)
+
+#Turn Right ___ towards ship
+    await turn_right(160)
+    time.sleep(1)
+
+#Go Foward ____push ship
+    await forward_fast(580)
+    time.sleep(2)
+
+#Return to start
+    await back_super_fast(600)
+    time.sleep(1)
+    await turn_left(60)
+    time.sleep(1)
+    await back_super_fast(600)
+
+
+
+runloop.run(main())
