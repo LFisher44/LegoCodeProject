@@ -1,0 +1,147 @@
+from hub import light_matrix
+from hub import port
+import motor
+import runloop
+import time
+async def main():
+    # write your code here
+    await light_matrix.write("Hi!")
+    async def forward_fast(angle):
+        motor.run_for_degrees(port.F, -angle, 360)
+        motor.run_for_degrees(port.E, angle, 360)
+
+    async def forward_slow(angle):
+        motor.run_for_degrees(port.F, -angle, 100)
+        motor.run_for_degrees(port.E, angle, 100)
+
+    async def back_fast(angle):
+        motor.run_for_degrees(port.F, angle, 360)
+        motor.run_for_degrees(port.E, -angle, 360)
+
+    async def back_slow(angle):
+        motor.run_for_degrees(port.F, angle, 100)
+        motor.run_for_degrees(port.E, -angle, 100)
+
+    async def turn_right(angle):
+        motor.run_for_degrees(port.E, -angle, 100)
+        motor.run_for_degrees(port.F, -angle, 100)
+
+    async def turn_left(angle):
+        motor.run_for_degrees(port.E, angle, 100)
+        motor.run_for_degrees(port.F, angle, 100)
+
+    async def left_arm(angle):
+        await motor.run_for_degrees(port.B, angle, 100)
+
+    async def right_arm(angle):
+        await motor.run_for_degrees(port.A, angle, 100)
+
+    async def hit(angle):
+        await motor.run_for_degrees(port.A, angle, 1000)
+        await motor.run_for_degrees(port.A, -angle, 1000)
+
+
+
+
+# turn over table 
+# bot placement: against the wall, left arm down, left prong almost touches the thin gray line
+
+    await left_arm(100)
+    await forward_fast(1600)
+    time.sleep(7)
+    await turn_left(165)
+    time.sleep(2)
+    await forward_fast(600)
+    time.sleep(3)
+    await turn_left(-165)
+    time.sleep(2)
+    await forward_fast(200)
+    time.sleep(2)
+    await turn_left(-160)
+    time.sleep(2)
+    await forward_fast(300)
+    time.sleep(4)
+    await left_arm(-80)
+    time.sleep(1)
+    await back_fast(300)
+    time.sleep(2)
+    await left_arm(80)
+    time.sleep(1)
+    await turn_left(-165)
+    time.sleep(1)
+    await forward_fast(1500)
+    time.sleep(2)
+    time.sleep(10)
+
+
+
+#spill the rocks
+#placement: line up with the red lever on the right white space, both arms at lowest possible
+
+    await left_arm(100)
+    await right_arm(-40)
+    await forward_fast(1700)
+    time.sleep(6)
+    await back_fast(1700)
+    time.sleep(6)
+
+
+# the silo
+# bot placement: against the wall lines up with the silo lever, left arm down, right arm in air (with blue gear connect horizontal)
+
+    await left_arm(100)
+    await forward_fast(730)
+    time.sleep(4)
+# hit silo
+    await hit(167)
+    await hit(167)
+    await hit(167)
+    time.sleep(1)
+    await forward_fast(-400)
+    time.sleep(10)
+
+
+# hit the basket down and take ring 
+# aim for the basket from the corner of the right whitespace
+    await left_arm(50)
+    await forward_fast(300)
+    time.sleep(2)
+    await hit(100)
+    time.sleep(.5)
+    await back_fast(20)
+    time.sleep(.5)
+    await turn_left(50)
+    time.sleep(1)
+    await left_arm(-50)
+    time.sleep(1)
+    await back_fast(400)
+#give enough time to set up th ebot for the nect 
+    time.sleep(5)
+
+
+
+
+# hit the basket down and push ring back starting at wall
+    await forward_fast(800)
+    time.sleep(3.5)
+    await left_arm(50)
+    await forward_fast(1030)
+    time.sleep(3.5)
+    await turn_right(0)
+    time.sleep(1)
+    await hit(150)
+    time.sleep(1)
+    await back_fast(200)
+    time.sleep(.5)
+    await turn_left(70)
+    time.sleep(1.5)
+    await left_arm(-50)
+    time.sleep(1)
+    await turn_left(900)
+    time.sleep(3)
+    await forward_fast(1200)
+#give enough time to set up the bot for the next event
+    time.sleep(10)
+
+
+runloop.run(main())
