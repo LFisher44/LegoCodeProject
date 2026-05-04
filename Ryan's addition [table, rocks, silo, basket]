@@ -46,6 +46,15 @@ async def main():
     async def left_arm_abs(angle):
         await motor.run_to_absolute_position(port.B, angle, 1000)
 
+    async def turn_right_slow(angle):
+        motor.run_for_degrees(port.E, -angle, 180)
+        motor.run_for_degrees(port.F, -angle, 180)
+
+    async def turn_left_slow(angle):
+        motor.run_for_degrees(port.E, angle, 180)
+        motor.run_for_degrees(port.F, angle, 180)
+
+
 # turn over table 
 # bot placement: against the wall, left arm down, left prong almost touches the thin gray line
 
