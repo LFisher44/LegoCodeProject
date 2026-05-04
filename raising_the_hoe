@@ -1,0 +1,122 @@
+from hub import light_matrix
+from hub import port
+import motor
+import runloop
+import time
+
+#Start right arm at 200deg and left arm on floor
+async def main():
+    # write your code here
+    await light_matrix.write("Hi!")
+    async def forward_fast(angle):
+        motor.run_for_degrees(port.F, -angle, 360)
+        motor.run_for_degrees(port.E, angle, 360)
+    
+    async def forward_super_fast(angle):
+        motor.run_for_degrees(port.F, -angle, 500)
+        motor.run_for_degrees(port.E, angle, 500)
+    
+    async def forward_slow(angle):
+        motor.run_for_degrees(port.F, -angle, 100)
+        motor.run_for_degrees(port.E, angle, 100)
+
+    async def back_fast(angle):
+        motor.run_for_degrees(port.F, angle, 360)
+        motor.run_for_degrees(port.E, -angle, 360)
+
+    async def back_super_fast(angle):
+        motor.run_for_degrees(port.F, angle, 500)
+        motor.run_for_degrees(port.E, -angle, 500)
+
+    async def back_slow(angle):
+        motor.run_for_degrees(port.F, angle, 100)
+        motor.run_for_degrees(port.E, -angle, 100)
+
+    async def turn_right(angle):
+        motor.run_for_degrees(port.E, -angle, 360)
+        motor.run_for_degrees(port.F, -angle, 360)
+
+    async def turn_left(angle):
+        motor.run_for_degrees(port.E, angle, 360)
+        motor.run_for_degrees(port.F, angle, 360)
+
+    async def left_arm(angle):
+        await motor.run_for_degrees(port.B, angle, 100)
+
+    async def right_arm(angle):
+        await motor.run_for_degrees(port.A, angle, 100)
+
+    async def turn_right_slow(angle):
+        motor.run_for_degrees(port.E, -angle, 180)
+        motor.run_for_degrees(port.F, -angle, 180)
+
+    async def turn_left_slow(angle):
+        motor.run_for_degrees(port.E, angle, 180)
+        motor.run_for_degrees(port.F, angle, 180)
+
+#Going to the sweeper thingy
+    await forward_super_fast(1600)
+    time.sleep(3)
+    await right_arm(110)
+    time.sleep(1)
+    await turn_left_slow(190)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right_slow(60)
+    time.sleep(1)
+    await turn_left_slow(90)
+    time.sleep(1)
+    await turn_right(160)
+    time.sleep(1)
+
+    await right_arm(-110)
+    time.sleep(1)
+    await back_super_fast(1700)
+    time.sleep(2)
+
+
+
+runloop.run(main())
